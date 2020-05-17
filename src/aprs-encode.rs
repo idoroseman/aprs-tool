@@ -35,7 +35,7 @@ fn main() {
 
   let mut frame = ax25::AX25::new(src, dest);
   let mut encoder = modem::Modem::new("sine.wav", src, dest);
-  encoder.write_frame(&frame.frame(text))
+  encoder.write_frame(frame.frame(text))
 
 }
 

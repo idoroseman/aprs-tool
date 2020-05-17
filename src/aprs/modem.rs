@@ -89,7 +89,7 @@ impl Modem {
 		}
 	}
 	
-	pub fn write_frame(&mut self, msg: &str){
+	pub fn write_frame(&mut self, msg: Vec<u8>){
 
 	  self.bitcount = 0;
 	  self.isHigh = false;
@@ -105,9 +105,9 @@ impl Modem {
 		}
 	  
 		// Create and write actual data
-		for c in msg.chars()
+		for c in msg
 		{
-			self.write_byte( c as u8, true);
+			self.write_byte( c, true);
 		}
   
 		for i in 0..flags_after
