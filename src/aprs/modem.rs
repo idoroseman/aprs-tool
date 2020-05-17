@@ -9,7 +9,7 @@ static preamble_length:i32 = 128;
 static postamble_length:i32 = 64;
 static flags_before:i32 = 32;
 static flags_after:i32 = 32;
-
+static sample_rate:u32 = 48000;
 
 pub struct Modem {
 	bitcount: i32,
@@ -24,7 +24,7 @@ impl Modem {
     pub fn new(filename:&str, src :&str, dest: &str)-> Modem {
 		let spec = hound::WavSpec {
 			channels: 1,
-			sample_rate: 44100,
+			sample_rate: sample_rate,
 			bits_per_sample: 16,
 			sample_format: hound::SampleFormat::Int,
 		};
@@ -38,7 +38,7 @@ impl Modem {
 	}
 
 	fn write_freq(&mut self , freq:f32, duration:f32){
-		for t in (0 .. (44100.0*duration) as i32).map(|x| x as f32 / 44100.0) {
+		for t in (0 .. ((sample_rate as f32)*duration) as i32).map(|x| x as f32 / 44100.0) {
 			let sample = (t * freq * 2.0 * PI).sin();
 			let amplitude = i16::MAX as f32;
 			self.writer.write_sample((sample * amplitude) as i16).unwrap();

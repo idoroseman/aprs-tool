@@ -2,6 +2,9 @@ extern crate clap;
 
 use clap::{Arg, App};
 use std::io::prelude::*;
+use std::fs;
+use std::fs::File;
+use std::io::{self, prelude::*, BufReader, BufRead};
 
 mod aprs;
 use aprs::ax25;
@@ -22,20 +25,38 @@ fn main() {
                                 .short("d")
                                 .long("dest")
                                 .help("callsign-ssid of recipient")
-                                .takes_value(true)
-                                .required(true))
-                          .arg(Arg::with_name("message")
-                               .help("message to send")
-                               .index(1))
+                                .takes_value(true))
+							.arg(Arg::with_name("input")
+                                .short("i")
+                                .long("input")
+                                .help("input filename")
+								.takes_value(true))
+							.arg(Arg::with_name("output")
+                                .short("o")
+                                .long("output")
+                                .help("output filename")
+								.takes_value(true))
+                        //    .arg(Arg::with_name("filenme")
+                        //        .help("message to send")
+                        //        .index(1))
                           .get_matches();
 
   let src = matches.value_of("source").unwrap();
   let dest = matches.value_of("destination").unwrap_or("APE6UB");
-  let text = matches.value_of("message").unwrap_or("");
+  let input = matches.value_of("input");
+  let output = matches.value_of("output").unwrap_or("aprs.wav");
 
   let mut frame = ax25::AX25::new(src, dest);
-  let mut encoder = modem::Modem::new("sine.wav", src, dest);
-  encoder.write_frame(frame.frame(text))
+  let mut encoder = modem::Modem::new(output, src, dest);
+  
+  let reader: Box<BufRead> = match input {
+		None => Box::new(BufReader::new(io::stdin())),
+		Some(filename) => Box::new(BufReader::new(fs::File::open(filename).unwrap()))
+	};
+
+  for line in reader.lines() {
+	encoder.write_frame(frame.frame(&line.unwrap()));
+  }
 
 }
 

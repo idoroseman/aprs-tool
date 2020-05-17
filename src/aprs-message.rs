@@ -4,6 +4,7 @@ use clap::{Arg, App};
 use std::io;
 use std::io::prelude::*;
 
+
 fn main() {
     let matches = App::new("aprs-message")
                           .version("1.0")
@@ -11,7 +12,7 @@ fn main() {
                           .about("create an aprs message packet")
                           .arg(Arg::with_name("dest")
                                .short("d")
-                               .long("to")
+                               .long("dest")
                                .help("callsign of recipiant")
                                .takes_value(true)
                                .required(true))
