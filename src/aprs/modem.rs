@@ -15,8 +15,9 @@ static flags_after:i32 = 32;
 
 pub struct Modem {
 	bitcount: i32,
-	writer: hound::WavWriter<std::io::BufWriter<std::fs::File>>,
 	is_high:bool,
+    phase:f32,
+	writer: hound::WavWriter<std::io::BufWriter<std::fs::File>>,
 }
 
 impl Modem {
@@ -28,17 +29,21 @@ impl Modem {
 			bits_per_sample: 16,
 			sample_format: hound::SampleFormat::Int,
 		};
+
 		Modem{
 			bitcount:0,
-			writer:hound::WavWriter::create(filename, spec).unwrap(),
 			is_high:false,
+			phase:0.0,
+			writer:hound::WavWriter::create(filename, spec).unwrap(),
 		}
 	}
 
 	fn write_freq(&mut self , freq:f32, duration:f32){
-		for t in (0 .. ((sample_rate as f32)*duration) as i32).map(|x| x as f32 / sample_rate as f32) {
-			let sample = (t * freq * 2.0 * PI).sin();
-			let amplitude = i16::MAX as f32;
+		let amplitude = i16::MAX as f32;
+        let delta = (freq * 2.0 * PI)/ (sample_rate as f32);
+		for _t in (0 .. ((sample_rate as f32)*duration) as i32).map(|x| x as f32 ) {
+			self.phase += delta;
+			let sample = (self.phase).sin();
 			self.writer.write_sample((sample * amplitude) as i16).unwrap();
 		}
 	}
