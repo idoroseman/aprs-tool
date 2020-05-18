@@ -38,7 +38,7 @@
             let mut crc:u16 = 0xffff;
             for ch in &self.encoded {
                 crc ^= *ch as u16;
-                for j in 0..8{
+                for _ in 0..8{
                     if crc & 0x01 != 0{
                         crc = (crc>>1) ^ 0x8404;
                     }

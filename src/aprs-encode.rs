@@ -47,7 +47,7 @@ fn main() {
   let output = matches.value_of("output").unwrap_or("aprs.wav");
 
   let mut frame = ax25::AX25::new(src, dest);
-  let mut encoder = modem::Modem::new(output, src, dest);
+  let mut encoder = modem::Modem::new(output);
   
   let reader: Box<BufRead> = match input {
 		None => Box::new(BufReader::new(io::stdin())),
