@@ -51,13 +51,16 @@ impl Modem {
 	fn write_tone(&mut self , bit:bool){
 		if !bit  {
 		  self.write_freq( lowFreq, bitDuration);
+		  print!("0");
 		} else {
 		  self.write_freq( highFreq, bitDuration);
+		  print!("1");
 		}
 	}
 
 	fn write_bit(&mut self, val:u8, bit_stuffing:bool){
 		let bit:bool = val & 0x01 != 0;
+		print!(" {}=",  val & 1);
 		if bit_stuffing 
 		{
 			if self.bitcount >= 5 
@@ -81,15 +84,17 @@ impl Modem {
 				self.is_high = !self.is_high; 		  
 				self.bitcount = 0;
 		}
-		self.write_tone(bit);
+		self.write_tone(self.is_high);
 	}
 	
 	fn write_byte(&mut self , character:u8, bit_stuffing:bool){
 		let mut ch = character;
+		print!("char {} {}:", ch, bit_stuffing);
 		for _ in 0..8 {
 			self.write_bit( ch & 1, bit_stuffing);
 			ch >>= 1;
 		}
+		println!();
 	}
 	
 	pub fn write_frame(&mut self, msg: Vec<u8>){
@@ -101,23 +106,26 @@ impl Modem {
 		{
 			self.write_tone(false);
 		}
-  
+		println!();
 		for _ in 0..flags_before
 		{
 			self.write_byte( 0x7E, false);
+
 		}
-	  
+
 		// Create and write actual data
 		for c in msg
 		{
 			self.write_byte( c, true);
+
 		}
-  
+
 		for _ in 0..flags_after
 		{
-			self.write_byte( 0x7E, true);
+			self.write_byte( 0x7E, false);
+
 		}
-  
+
 	  // Write postamble
 	  for _ in 0..postamble_length
 		{
