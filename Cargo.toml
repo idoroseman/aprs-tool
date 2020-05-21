@@ -17,3 +17,7 @@ path = "src/aprs-encode.rs"
 [[bin]]
 name = "aprs-message"
 path = "src/aprs-message.rs"
+
+[[bin]]
+name = "aprs-location"
+path = "src/aprs-location.rs"
