@@ -1,8 +1,7 @@
 extern crate clap;
 
 use clap::{Arg, App};
-use std::io;
-use std::io::prelude::*;
+
 
 fn base91enc(value:i32, length: i32) -> String {
     let mut rv = String::new();

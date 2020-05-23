@@ -1,14 +1,13 @@
 extern crate clap;
 
 use clap::{Arg, App};
-use std::io::prelude::*;
 use std::fs;
-use std::fs::File;
-use std::io::{self, prelude::*, BufReader, BufRead};
+use std::io::{self, BufReader, BufRead};
 
 mod aprs;
 use aprs::ax25;
 use aprs::modem;
+use aprs::modemfx;
 
 fn main() {
     let matches = App::new("aprs-encode")
@@ -47,7 +46,7 @@ fn main() {
   let output = matches.value_of("output").unwrap_or("aprs.wav");
 
   let mut frame = ax25::AX25::new(src, dest);
-  let mut encoder = modem::Modem::new(output);
+  let mut encoder = modemfx::ModemFx::new(output);
   
   let reader: Box<BufRead> = match input {
 		None => Box::new(BufReader::new(io::stdin())),
